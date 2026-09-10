@@ -128,9 +128,9 @@
     gap: 12px;
   }
   
-  /* Tarjetas de Producto */
+  /* Make Product Card images smaller */
   .product-card-header {
-    height: 160px; /* Más pequeño para que quepan bien las 2 columnas */
+    height: 120px; /* Más pequeño para móvil */
   }
   /* Etiquetas superiores de la foto */
   .product-badge, .product-brand-tag {
@@ -206,6 +206,31 @@
   }
   
   /* Filtros del Catálogo */
+  .catalog-toolbar {
+    margin-bottom: 20px;
+  }
+  .category-filters {
+    display: flex;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    gap: 8px;
+    padding-bottom: 12px; 
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+  .category-filters::-webkit-scrollbar {
+    display: none; /* Chrome, Safari and Opera */
+  }
+  .filter-chip {
+    flex: 0 0 auto; /* prevent shrinking */
+    font-size: 0.75rem;
+    padding: 6px 14px;
+  }
+  .product-count-text {
+    font-size: 0.75rem;
+    margin-top: 8px;
+  }
+  
   .filter-bar {
     flex-direction: column;
     align-items: stretch;
@@ -214,6 +239,30 @@
   .filter-tabs {
     flex-wrap: wrap;
     justify-content: center;
+  }
+  
+  /* Brand Catalog Header Mobile */
+  .brand-catalog-header {
+    padding: 16px;
+    margin-bottom: 20px;
+  }
+  .brand-header-actions {
+    flex-wrap: nowrap;
+    gap: 8px;
+    align-items: center;
+    justify-content: flex-start;
+  }
+  .btn-back-to-brands {
+    font-size: 0.8rem;
+    padding: 6px 12px;
+  }
+  .brand-badge-pill {
+    font-size: 0.7rem;
+    padding: 4px 10px;
+    white-space: nowrap;
+  }
+  .brand-header-title {
+    font-size: 1.8rem;
   }
   
   /* Footer */
