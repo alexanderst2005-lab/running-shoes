@@ -217,15 +217,28 @@ document.addEventListener('DOMContentLoaded', async () => {
   const editModal = document.getElementById('edit-product-modal');
   const btnCloseEdit = document.getElementById('btn-close-edit-modal');
   const btnCancelEdit = document.getElementById('btn-cancel-edit');
+  let currentEditProductImage = null;
+
+  async function uploadImageFile(fileInputId) {
+    const fileInput = document.getElementById(fileInputId);
+    const file = fileInput.files[0];
+    if (!file) return null;
+    
+    const storageRef = firebase.storage().ref();
+    const fileRef = storageRef.child(`products/${Date.now()}_${file.name}`);
+    await fileRef.put(file);
+    return await fileRef.getDownloadURL();
+  }
 
   function openEditModal(product) {
     currentEditProductId = product.id;
+    currentEditProductImage = product.image || '';
 
     document.getElementById('edit-prod-name').value       = product.name || '';
     document.getElementById('edit-prod-brand').value      = product.brandId || 'nike';
     document.getElementById('edit-prod-category').value   = product.category || 'Daily Trainer';
     document.getElementById('edit-prod-price').value      = product.priceCOP || '';
-    document.getElementById('edit-prod-image').value      = product.image || '';
+    document.getElementById('edit-prod-image').value      = ''; // Reset file input
     document.getElementById('edit-prod-cushioning').value = product.cushioning || '';
     document.getElementById('edit-prod-weight').value     = product.weight || '';
     document.getElementById('edit-prod-drop').value       = product.drop || '';
@@ -249,9 +262,26 @@ document.addEventListener('DOMContentLoaded', async () => {
       e.preventDefault();
       if (!currentEditProductId) return;
 
+      const submitBtn = editForm.querySelector('button[type="submit"]');
+      const originalBtnText = submitBtn.textContent;
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Guardando...';
+
       const brandId = document.getElementById('edit-prod-brand').value;
       const brandMap = { nike:'Nike', adidas:'Adidas', 'new-balance':'New Balance', asics:'ASICS', puma:'Puma', reebok:'Reebok' };
       const priceNum = parseInt(document.getElementById('edit-prod-price').value) || 0;
+
+      let imageUrl = null;
+      try {
+        if (firebase.storage) {
+          imageUrl = await uploadImageFile('edit-prod-image');
+        }
+      } catch (err) {
+        alert('❌ Error al subir nueva imagen: ' + err.message);
+        submitBtn.disabled = false;
+        submitBtn.textContent = originalBtnText;
+        return;
+      }
 
       const updatedData = {
         name:         document.getElementById('edit-prod-name').value,
@@ -260,7 +290,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         category:     document.getElementById('edit-prod-category').value,
         priceCOP:     priceNum,
         priceFormatted: `$${priceNum.toLocaleString('es-CO')} COP`,
-        image:        document.getElementById('edit-prod-image').value,
+        image:        imageUrl || currentEditProductImage,
         cushioning:   document.getElementById('edit-prod-cushioning').value,
         weight:       document.getElementById('edit-prod-weight').value,
         drop:         document.getElementById('edit-prod-drop').value,
@@ -276,6 +306,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         await loadDashboardStats();
       } catch (err) {
         alert('❌ Error al actualizar producto: ' + err.message);
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = originalBtnText;
       }
     });
   }
@@ -288,6 +321,27 @@ document.addEventListener('DOMContentLoaded', async () => {
     addForm.addEventListener('submit', async (e) => {
       e.preventDefault();
 
+      const submitBtn = addForm.querySelector('button[type="submit"]');
+      const originalBtnText = submitBtn.textContent;
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Subiendo imagen y guardando...';
+
+      let imageUrl = '';
+      try {
+        if (firebase.storage) {
+          imageUrl = await uploadImageFile('prod-image');
+        }
+        if (!imageUrl) {
+          // Si no hay Storage o falló sin error, usamos un placeholder
+          imageUrl = 'assets/images/hero.jpg'; 
+        }
+      } catch (err) {
+        alert('❌ Error al subir la imagen: ' + err.message);
+        submitBtn.disabled = false;
+        submitBtn.textContent = originalBtnText;
+        return;
+      }
+
       const brandId = document.getElementById('prod-brand').value;
       const brandMap = { nike:'Nike', adidas:'Adidas', 'new-balance':'New Balance', asics:'ASICS', puma:'Puma', reebok:'Reebok' };
       const priceNum = parseInt(document.getElementById('prod-price').value) || 0;
@@ -299,7 +353,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         category:       document.getElementById('prod-category').value,
         priceCOP:       priceNum,
         priceFormatted: `$${priceNum.toLocaleString('es-CO')} COP`,
-        image:          document.getElementById('prod-image').value,
+        image:          imageUrl,
         cushioning:     document.getElementById('prod-cushioning').value,
         weight:         document.getElementById('prod-weight').value,
         drop:           document.getElementById('prod-drop').value,
@@ -316,6 +370,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         await loadDashboardStats();
       } catch (err) {
         alert('❌ Error al guardar la zapatilla: ' + err.message);
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = originalBtnText;
       }
     });
   }

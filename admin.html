@@ -13,6 +13,7 @@
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-storage-compat.js"></script>
 
   <link rel="stylesheet" href="css/styles.css">
   <link rel="stylesheet" href="css/components.css">
@@ -149,8 +150,8 @@
           </div>
 
           <div class="form-group">
-            <label class="form-label">URL de Imagen del Producto:</label>
-            <input type="url" id="prod-image" class="form-input" placeholder="https://ejemplo.com/zapatilla.jpg" required>
+            <label class="form-label">Foto del Producto (Subir archivo):</label>
+            <input type="file" id="prod-image" class="form-input" accept="image/*" required>
           </div>
 
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
@@ -269,8 +270,8 @@
           </div>
 
           <div class="form-group full">
-            <label class="form-label">URL de Imagen:</label>
-            <input type="url" id="edit-prod-image" class="form-input" required>
+            <label class="form-label">Foto del Producto (Opcional: Subir nueva foto para reemplazar la actual):</label>
+            <input type="file" id="edit-prod-image" class="form-input" accept="image/*">
           </div>
 
           <div class="form-group">
