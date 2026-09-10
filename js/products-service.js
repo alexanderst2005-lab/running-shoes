@@ -27,7 +27,16 @@ class ProductsService {
 
   // ─── CACHE UTILS ───────────────────────────────────────────────────────────
   _isCacheEnabled() {
-    return typeof window !== 'undefined' && !window.location.pathname.includes('admin.html');
+    return typeof window !== 'undefined';
+  }
+
+  clearCache() {
+    if (!this._isCacheEnabled()) return;
+    Object.keys(localStorage).forEach(key => {
+      if (key.startsWith('rs_cache_')) {
+        localStorage.removeItem(key);
+      }
+    });
   }
 
   // ─── MARCAS ────────────────────────────────────────────────────────────────
@@ -141,6 +150,7 @@ class ProductsService {
   }
 
   async addProduct(data) {
+    this.clearCache();
     if (this.db) {
       const ref = await this.db.collection('products').add({
         ...data,
@@ -154,6 +164,7 @@ class ProductsService {
   }
 
   async updateProduct(productId, data) {
+    this.clearCache();
     if (this.db) {
       await this.db.collection('products').doc(productId).update(data);
       return;
@@ -163,6 +174,7 @@ class ProductsService {
   }
 
   async deleteProduct(productId) {
+    this.clearCache();
     if (this.db) {
       await this.db.collection('products').doc(productId).delete();
       return;
