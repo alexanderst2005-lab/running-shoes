@@ -132,24 +132,51 @@
   .product-card-header {
     height: 160px; /* Más pequeño para que quepan bien las 2 columnas */
   }
-  .product-card-body {
-    padding: 12px 10px;
+  /* Etiquetas superiores de la foto */
+  .product-badge, .product-brand-tag {
+    font-size: 0.55rem;
+    padding: 3px 6px;
+    top: 6px;
   }
-  .product-title {
-    font-size: 0.95rem;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  .product-price {
-    font-size: 1.1rem;
+  .product-badge {
+    left: 6px;
   }
   .product-brand-tag {
+    right: 6px;
+  }
+  
+  /* Detalles de la tarjeta */
+  .product-card-body {
+    padding: 10px 8px;
+  }
+  .product-category {
     font-size: 0.65rem;
-    padding: 3px 6px;
+    margin-bottom: 4px;
+  }
+  .product-title {
+    font-size: 0.85rem;
+    margin-bottom: 6px;
+    line-height: 1.2;
+    white-space: normal;
+    height: 2.4em;
+  }
+  .spec-pill {
+    font-size: 0.6rem;
+    padding: 2px 4px;
+  }
+  .product-specs-pills {
+    margin-bottom: 8px;
+  }
+  .product-price {
+    font-size: 1rem;
+    margin-bottom: 8px;
+  }
+  
+  /* Botón de WhatsApp - Solo ícono */
+  .btn-whatsapp-product span {
+    display: none;
   }
   .btn-whatsapp-product {
-    font-size: 0.75rem;
     padding: 8px 0;
   }
   .btn-whatsapp-product svg {
