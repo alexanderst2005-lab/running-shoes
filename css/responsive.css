@@ -19,6 +19,10 @@
   }
   
   /* Grids Principales */
+  .brands-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
   .features-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 20px;
@@ -76,6 +80,24 @@
     margin-bottom: 24px;
   }
   
+  /* Marcas (Brands Grid) */
+  .brands-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .brand-card {
+    height: 250px;
+  }
+  .brand-logo-watermark {
+    font-size: 3.5rem;
+  }
+  .brand-name {
+    font-size: 2rem;
+  }
+  .brand-tagline {
+    font-size: 0.9rem;
+  }
+
   /* Destacados (Featured Showcase) */
   .featured-showcase {
     grid-template-columns: 1fr;
