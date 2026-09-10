@@ -25,9 +25,28 @@ class ProductsService {
     }
   }
 
+  // ─── CACHE UTILS ───────────────────────────────────────────────────────────
+  _isCacheEnabled() {
+    return typeof window !== 'undefined' && !window.location.pathname.includes('admin.html');
+  }
+
   // ─── MARCAS ────────────────────────────────────────────────────────────────
 
   async getBrands() {
+    const cacheKey = 'rs_cache_brands';
+    if (this._isCacheEnabled()) {
+      const cached = localStorage.getItem(cacheKey);
+      if (cached) {
+        this._fetchBrands().then(d => localStorage.setItem(cacheKey, JSON.stringify(d)));
+        return JSON.parse(cached);
+      }
+    }
+    const data = await this._fetchBrands();
+    if (this._isCacheEnabled()) localStorage.setItem(cacheKey, JSON.stringify(data));
+    return data;
+  }
+
+  async _fetchBrands() {
     if (this.db) {
       try {
         const snap = await this.db.collection('brands').orderBy('name').get();
@@ -47,6 +66,20 @@ class ProductsService {
   // ─── PRODUCTOS ─────────────────────────────────────────────────────────────
 
   async getAllProducts() {
+    const cacheKey = 'rs_cache_all_products';
+    if (this._isCacheEnabled()) {
+      const cached = localStorage.getItem(cacheKey);
+      if (cached) {
+        this._fetchAllProducts().then(d => localStorage.setItem(cacheKey, JSON.stringify(d)));
+        return JSON.parse(cached);
+      }
+    }
+    const data = await this._fetchAllProducts();
+    if (this._isCacheEnabled()) localStorage.setItem(cacheKey, JSON.stringify(data));
+    return data;
+  }
+
+  async _fetchAllProducts() {
     if (this.db) {
       try {
         const snap = await this.db.collection('products').get();
@@ -57,6 +90,20 @@ class ProductsService {
   }
 
   async getProductsByBrand(brandId) {
+    const cacheKey = `rs_cache_products_${brandId}`;
+    if (this._isCacheEnabled()) {
+      const cached = localStorage.getItem(cacheKey);
+      if (cached) {
+        this._fetchProductsByBrand(brandId).then(d => localStorage.setItem(cacheKey, JSON.stringify(d)));
+        return JSON.parse(cached);
+      }
+    }
+    const data = await this._fetchProductsByBrand(brandId);
+    if (this._isCacheEnabled()) localStorage.setItem(cacheKey, JSON.stringify(data));
+    return data;
+  }
+
+  async _fetchProductsByBrand(brandId) {
     if (this.db) {
       try {
         const snap = await this.db.collection('products')
