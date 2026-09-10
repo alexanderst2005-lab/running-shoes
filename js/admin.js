@@ -26,6 +26,69 @@ document.addEventListener('DOMContentLoaded', async () => {
     statDbStatus.textContent = isOnline ? 'Firebase Cloud' : 'Catálogo Local';
   }
 
+  // ─── AUTENTICACIÓN FIREBASE ───────────────────────────────────────────────
+  const loginContainer = document.getElementById('login-container');
+  const adminDashboard = document.getElementById('admin-dashboard');
+  const loginForm = document.getElementById('login-form');
+  const btnLogout = document.getElementById('btn-logout');
+  const loginError = document.getElementById('login-error');
+
+  if (isOnline && firebase.auth) {
+    // Observar estado de autenticación
+    firebase.auth().onAuthStateChanged(user => {
+      if (user) {
+        // Usuario logueado
+        loginContainer.style.display = 'none';
+        adminDashboard.style.display = 'block';
+        btnLogout.style.display = 'block';
+        
+        // Cargar datos del dashboard al iniciar sesión
+        loadDashboardStats();
+        loadProductsTable();
+      } else {
+        // Sin sesión
+        loginContainer.style.display = 'flex';
+        adminDashboard.style.display = 'none';
+        btnLogout.style.display = 'none';
+      }
+    });
+
+    // Manejar envío del formulario de login
+    if (loginForm) {
+      loginForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('login-email').value;
+        const password = document.getElementById('login-password').value;
+        loginError.style.display = 'none';
+        
+        try {
+          await firebase.auth().signInWithEmailAndPassword(email, password);
+        } catch (error) {
+          console.error("Error de login:", error);
+          loginError.style.display = 'block';
+          if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
+             loginError.textContent = 'Correo o contraseña incorrectos.';
+          } else {
+             loginError.textContent = 'Error al iniciar sesión. Verifica tu conexión.';
+          }
+        }
+      });
+    }
+
+    // Manejar cierre de sesión
+    if (btnLogout) {
+      btnLogout.addEventListener('click', () => {
+        firebase.auth().signOut();
+      });
+    }
+  } else {
+    // Si no hay Firebase (modo local), mostrar dashboard para pruebas locales
+    loginContainer.style.display = 'none';
+    adminDashboard.style.display = 'block';
+    loadDashboardStats();
+    loadProductsTable();
+  }
+
   // ─── SEEDING DE DATOS EN FIREBASE ─────────────────────────────────────────
   const btnSeed = document.getElementById('btn-seed-firebase');
   if (btnSeed) {

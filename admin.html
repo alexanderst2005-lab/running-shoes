@@ -12,6 +12,7 @@
   <!-- Firebase v10 SDK -->
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
 
   <link rel="stylesheet" href="css/styles.css">
   <link rel="stylesheet" href="css/components.css">
@@ -31,6 +32,9 @@
         <span id="firebase-status-badge" class="admin-status-badge firebase-local">
           ⏳ Comprobando Firebase...
         </span>
+        <button id="btn-logout" class="btn-hero-secondary" style="padding: 8px 18px; font-size: 0.85rem; display: none;">
+          Cerrar Sesión
+        </button>
         <a href="index.html" class="btn-hero-secondary" style="padding: 8px 18px; font-size: 0.85rem;">
           ← Volver a la Tienda
         </a>
@@ -40,7 +44,29 @@
 
   <main class="container" style="padding-top: 30px; padding-bottom: 60px;">
     
-    <!-- Banner de Inicialización Firebase -->
+    <!-- Login Section (Visible por defecto, se oculta si hay sesión) -->
+    <div id="login-container" class="login-wrapper">
+      <div class="login-card">
+        <h2>🔒 Acceso Restringido</h2>
+        <p>Inicia sesión para gestionar el catálogo.</p>
+        <form id="login-form">
+          <div class="form-group">
+            <label class="form-label">Correo Electrónico:</label>
+            <input type="email" id="login-email" class="form-input" required placeholder="admin@tienda.com">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Contraseña:</label>
+            <input type="password" id="login-password" class="form-input" required placeholder="••••••••">
+          </div>
+          <button type="submit" class="btn-primary" style="width: 100%; margin-top: 10px;">Entrar</button>
+        </form>
+        <div id="login-error" class="login-error" style="display: none;">Credenciales inválidas.</div>
+      </div>
+    </div>
+
+    <!-- Dashboard Section (Oculto por defecto, se muestra si hay sesión) -->
+    <div id="admin-dashboard" style="display: none;">
+      <!-- Banner de Inicialización Firebase -->
     <div class="brand-catalog-header" style="padding: 28px; margin-bottom: 24px;">
       <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
         <div>
@@ -193,10 +219,10 @@
             </tbody>
           </table>
         </div>
+        </div>
       </div>
 
-    </div>
-
+    </div> <!-- End Dashboard Section -->
   </main>
 
   <!-- Modal Editar Producto -->
