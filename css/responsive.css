@@ -124,26 +124,32 @@
   
   /* Catálogo de Productos (Product Grid) */
   .product-grid, .products-grid {
-    grid-template-columns: repeat(2, 1fr); /* 2 columnas en móvil */
+    grid-template-columns: repeat(2, 1fr); /* 2 columnas en móvil siempre */
     gap: 12px;
   }
   
   /* Tarjetas de Producto */
+  .product-card-header {
+    height: 160px; /* Más pequeño para que quepan bien las 2 columnas */
+  }
   .product-card-body {
-    padding: 16px 12px;
+    padding: 12px 10px;
   }
   .product-title {
-    font-size: 1.1rem;
+    font-size: 0.95rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   .product-price {
-    font-size: 1.2rem;
+    font-size: 1.1rem;
   }
   .product-brand-tag {
-    font-size: 0.7rem;
-    padding: 4px 8px;
+    font-size: 0.65rem;
+    padding: 3px 6px;
   }
   .btn-whatsapp-product {
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     padding: 8px 0;
   }
   .btn-whatsapp-product svg {
@@ -194,11 +200,6 @@
 
 /* --- CELULARES PEQUEÑOS (max-width: 480px) --- */
 @media (max-width: 480px) {
-  /* En pantallas muy pequeñas, 1 sola columna para productos */
-  .product-grid, .products-grid {
-    grid-template-columns: 1fr;
-  }
-  
   .hero-buttons {
     flex-direction: column;
     width: 100%;
