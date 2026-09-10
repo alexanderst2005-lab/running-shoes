@@ -45,8 +45,13 @@
 
   <main class="container" style="padding-top: 30px; padding-bottom: 60px;">
     
-    <!-- Login Section (Visible por defecto, se oculta si hay sesión) -->
-    <div id="login-container" class="login-wrapper">
+    <!-- Auth Loading State (Visible por defecto mientras Firebase verifica la sesión) -->
+    <div id="auth-loading" style="text-align: center; padding: 100px 20px; color: var(--text-secondary); font-size: 1.2rem;">
+      ⏳ Verificando sesión...
+    </div>
+
+    <!-- Login Section (Oculto por defecto) -->
+    <div id="login-container" class="login-wrapper" style="display: none;">
       <div class="login-card">
         <h2>🔒 Acceso Restringido</h2>
         <p>Inicia sesión para gestionar el catálogo.</p>

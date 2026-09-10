@@ -27,6 +27,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   // ─── AUTENTICACIÓN FIREBASE ───────────────────────────────────────────────
+  const authLoading = document.getElementById('auth-loading');
   const loginContainer = document.getElementById('login-container');
   const adminDashboard = document.getElementById('admin-dashboard');
   const loginForm = document.getElementById('login-form');
@@ -36,6 +37,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (isOnline && firebase.auth) {
     // Observar estado de autenticación
     firebase.auth().onAuthStateChanged(user => {
+      if (authLoading) authLoading.style.display = 'none';
+
       if (user) {
         // Usuario logueado
         loginContainer.style.display = 'none';
@@ -83,6 +86,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   } else {
     // Si no hay Firebase (modo local), mostrar dashboard para pruebas locales
+    if (authLoading) authLoading.style.display = 'none';
     loginContainer.style.display = 'none';
     adminDashboard.style.display = 'block';
     loadDashboardStats();
