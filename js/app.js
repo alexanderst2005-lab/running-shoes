@@ -32,8 +32,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   const modalPrice = document.getElementById('modal-product-price');
   const modalCategory = document.getElementById('modal-product-category');
   const modalDesc = document.getElementById('modal-product-desc');
-  const modalWeight = document.getElementById('modal-spec-weight');
-  const modalDrop = document.getElementById('modal-spec-drop');
   const modalCushioning = document.getElementById('modal-spec-cushioning');
   const modalSizesContainer = document.getElementById('modal-sizes-container');
   const btnModalWhatsapp = document.getElementById('btn-modal-whatsapp');
@@ -182,8 +180,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         
         <div class="product-specs-pills">
           ${product.cushioning ? `<span class="spec-pill">${product.cushioning}</span>` : ''}
-          ${product.weight ? `<span class="spec-pill">⚖️ ${product.weight}</span>` : ''}
-          ${product.drop ? `<span class="spec-pill">👟 Drop ${product.drop}</span>` : ''}
         </div>
 
         <div class="product-price-row">
@@ -246,8 +242,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     modalCategory.textContent = `${product.brandName} • ${product.category || 'Running'}`;
     modalDesc.textContent = product.description || 'Calzado deportivo de alto rendimiento diseñado para ofrecer amortiguación superior, estabilidad y retorno de energía.';
 
-    modalWeight.textContent = product.weight || '280 g';
-    modalDrop.textContent = product.drop || '10 mm';
     modalCushioning.textContent = product.cushioning || 'Alta';
 
     // Renderizar Tallas

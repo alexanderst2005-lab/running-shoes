@@ -240,8 +240,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('edit-prod-price').value      = product.priceCOP || '';
     document.getElementById('edit-prod-image').value      = ''; // Reset file input
     document.getElementById('edit-prod-cushioning').value = product.cushioning || '';
-    document.getElementById('edit-prod-weight').value     = product.weight || '';
-    document.getElementById('edit-prod-drop').value       = product.drop || '';
     document.getElementById('edit-prod-badge').value      = product.badge || '';
     document.getElementById('edit-prod-desc').value       = product.description || '';
 
@@ -292,8 +290,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         priceFormatted: `$${priceNum.toLocaleString('es-CO')} COP`,
         image:        imageUrl || currentEditProductImage,
         cushioning:   document.getElementById('edit-prod-cushioning').value,
-        weight:       document.getElementById('edit-prod-weight').value,
-        drop:         document.getElementById('edit-prod-drop').value,
         badge:        document.getElementById('edit-prod-badge').value,
         description:  document.getElementById('edit-prod-desc').value,
       };
@@ -355,8 +351,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         priceFormatted: `$${priceNum.toLocaleString('es-CO')} COP`,
         image:          imageUrl,
         cushioning:     document.getElementById('prod-cushioning').value,
-        weight:         document.getElementById('prod-weight').value,
-        drop:           document.getElementById('prod-drop').value,
         badge:          document.getElementById('prod-badge').value,
         description:    document.getElementById('prod-desc').value,
         sizes:          ["38","39","40","41","42","43","44"]
