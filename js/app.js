@@ -50,10 +50,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     brandsGrid.innerHTML = '<div style="color: var(--text-secondary); text-align: center; grid-column: 1/-1;">Cargando marcas...</div>';
 
     const brands = await window.productsService.getBrands();
+    
+    // Fetch all product counts concurrently to avoid UI popping/disappearing
+    const counts = await Promise.all(brands.map(brand => window.productsService.getProductCountByBrand(brand.id)));
+
     brandsGrid.innerHTML = '';
 
-    for (const brand of brands) {
-      const productCount = await window.productsService.getProductCountByBrand(brand.id);
+    brands.forEach((brand, index) => {
+      const productCount = counts[index];
 
       const card = document.createElement('div');
       card.className = 'brand-card';
@@ -82,7 +86,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       });
 
       brandsGrid.appendChild(card);
-    }
+    });
   }
 
   // ------------------------------------------------------------------------
