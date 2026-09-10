@@ -86,16 +86,18 @@
     gap: 16px;
   }
   .brand-card {
-    height: 250px;
+    height: 320px;
   }
   .brand-logo-watermark {
-    font-size: 3.5rem;
+    font-size: 2.8rem;
   }
   .brand-name {
-    font-size: 2rem;
+    font-size: 1.8rem;
   }
   .brand-tagline {
-    font-size: 0.9rem;
+    font-size: 0.85rem;
+    margin-bottom: 15px;
+    line-height: 1.3;
   }
 
   /* Destacados (Featured Showcase) */
@@ -121,7 +123,7 @@
   }
   
   /* Catálogo de Productos (Product Grid) */
-  .product-grid {
+  .product-grid, .products-grid {
     grid-template-columns: repeat(2, 1fr); /* 2 columnas en móvil */
     gap: 12px;
   }
@@ -193,7 +195,7 @@
 /* --- CELULARES PEQUEÑOS (max-width: 480px) --- */
 @media (max-width: 480px) {
   /* En pantallas muy pequeñas, 1 sola columna para productos */
-  .product-grid {
+  .product-grid, .products-grid {
     grid-template-columns: 1fr;
   }
   
