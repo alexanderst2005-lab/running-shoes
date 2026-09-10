@@ -86,9 +86,22 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   // ------------------------------------------------------------------------
-  // 2. NAVEGACIÓN Y VISTA EXCLUSIVA POR MARCA
+  // 2. NAVEGACIÓN Y VISTAS (SPA Routing con Historial)
   // ------------------------------------------------------------------------
-  async function openBrandCatalog(brandId, filter = 'all') {
+  
+  // Manejo de Historial (Permite usar botón "Atrás" en móviles)
+  window.addEventListener('popstate', (e) => {
+    if (e.state && e.state.view === 'brand') {
+      openBrandCatalog(e.state.brandId, 'all', false);
+    } else {
+      showHomepage(false);
+    }
+  });
+
+  // Estado inicial al cargar la página
+  history.replaceState({ view: 'home' }, '', window.location.pathname);
+
+  async function openBrandCatalog(brandId, filter = 'all', pushHistory = true) {
     currentBrandId = brandId;
     currentFilter = filter;
 
@@ -107,19 +120,28 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Desplazarse suavemente arriba
     window.scrollTo({ top: 0, behavior: 'smooth' });
 
+    // Guardar en el historial del navegador
+    if (pushHistory) {
+      history.pushState({ view: 'brand', brandId: brandId }, '', `#marca-${brandId}`);
+    }
+
     // Cargar Catálogo
     await renderBrandProducts(brandId, filter);
   }
 
-  function showHomepage() {
+  function showHomepage(pushHistory = true) {
     currentBrandId = null;
     brandView.classList.remove('active');
     homeView.style.display = 'block';
     window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    if (pushHistory) {
+      history.pushState({ view: 'home' }, '', window.location.pathname);
+    }
   }
 
   if (btnBackToBrands) {
-    btnBackToBrands.addEventListener('click', showHomepage);
+    btnBackToBrands.addEventListener('click', () => showHomepage(true));
   }
 
   // Renderizar Productos de la Marca Seleccionada
