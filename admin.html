@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel de Administración — Running Shoes</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,700;0,800&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Firebase v10 SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/admin.css">
+</head>
+<body class="admin-body">
+
+  <!-- Admin Header -->
+  <header class="admin-header">
+    <div class="container admin-header-inner">
+      <a href="index.html" class="brand-logo">
+        <div class="brand-logo-icon">RS</div>
+        <div class="brand-logo-text">RUNNING <span>ADMIN</span></div>
+      </a>
+
+      <div style="display: flex; align-items: center; gap: 16px;">
+        <span id="firebase-status-badge" class="admin-status-badge firebase-local">
+          ⏳ Comprobando Firebase...
+        </span>
+        <a href="index.html" class="btn-hero-secondary" style="padding: 8px 18px; font-size: 0.85rem;">
+          ← Volver a la Tienda
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container" style="padding-top: 30px; padding-bottom: 60px;">
+    
+    <!-- Banner de Inicialización Firebase -->
+    <div class="brand-catalog-header" style="padding: 28px; margin-bottom: 24px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+        <div>
+          <h2 style="font-family: var(--font-display); font-size: 1.8rem; text-transform: uppercase;">Gestión de Catálogo de Productos</h2>
+          <p style="color: var(--text-secondary); font-size: 0.95rem; margin-top: 4px;">
+            Agrega, edita o elimina productos de tu tienda. Puedes hacer clic en "Inicializar Firestore" para cargar el catálogo base a tu base de datos en la nube.
+          </p>
+        </div>
+        <div>
+          <button id="btn-seed-firebase" class="btn-seed-firebase">
+            🌱 Inicializar Firestore (1-Clic)
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats Dashboard -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon">👟</div>
+        <div class="stat-value" id="stat-total-products">0</div>
+        <div class="stat-label">Total Productos</div>
+      </div>
+      <div class="stat-card orange">
+        <div class="stat-icon">🏷️</div>
+        <div class="stat-value" id="stat-total-brands">0</div>
+        <div class="stat-label">Marcas Registradas</div>
+      </div>
+      <div class="stat-card blue">
+        <div class="stat-icon">⭐</div>
+        <div class="stat-value" id="stat-featured-count">0</div>
+        <div class="stat-label">Productos Destacados</div>
+      </div>
+      <div class="stat-card purple">
+        <div class="stat-icon">☁️</div>
+        <div class="stat-value" id="stat-db-status">Online</div>
+        <div class="stat-label">Base de Datos</div>
+      </div>
+    </div>
+
+    <!-- Formulario Agregar Zapatilla & Inventario -->
+    <div style="display: grid; grid-template-columns: 360px 1fr; gap: 24px; align-items: start;">
+      
+      <!-- Panel 1: Formulario Agregar Producto -->
+      <div class="panel-card">
+        <h3 class="panel-title" style="margin-bottom: 18px;">➕ Agregar Zapatilla</h3>
+
+        <form id="add-product-form">
+          <div class="form-group">
+            <label class="form-label">Marca:</label>
+            <select id="prod-brand" class="form-select" required>
+              <option value="nike">Nike</option>
+              <option value="adidas">Adidas</option>
+              <option value="new-balance">New Balance</option>
+              <option value="asics">ASICS</option>
+              <option value="puma">Puma</option>
+              <option value="reebok">Reebok</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Nombre del Modelo:</label>
+            <input type="text" id="prod-name" class="form-input" placeholder="Ej: Nike Vaporfly 3" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Categoría:</label>
+            <select id="prod-category" class="form-select">
+              <option value="Daily Trainer">Daily Trainer</option>
+              <option value="Máxima Amortiguación">Máxima Amortiguación</option>
+              <option value="Velocidad & Carbono">Velocidad & Carbono</option>
+              <option value="Estabilidad">Estabilidad</option>
+              <option value="Casual & Sport">Casual & Sport</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Precio en COP ($):</label>
+            <input type="number" id="prod-price" class="form-input" placeholder="Ej: 529900" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">URL de Imagen del Producto:</label>
+            <input type="url" id="prod-image" class="form-input" placeholder="https://ejemplo.com/zapatilla.jpg" required>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <div class="form-group">
+              <label class="form-label">Peso (g):</label>
+              <input type="text" id="prod-weight" class="form-input" placeholder="Ej: 275 g">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Drop (mm):</label>
+              <input type="text" id="prod-drop" class="form-input" placeholder="Ej: 10 mm">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Amortiguación:</label>
+            <input type="text" id="prod-cushioning" class="form-input" placeholder="Ej: Reactiva / Suave">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Etiqueta Destacada (Badge):</label>
+            <input type="text" id="prod-badge" class="form-input" placeholder="Ej: Nuevo, Más Vendido">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Descripción Detallada:</label>
+            <textarea id="prod-desc" class="form-textarea" rows="3" placeholder="Detalles de la capellada, mediasuela y suela..."></textarea>
+          </div>
+
+          <button type="submit" class="btn-primary" style="width: 100%; margin-top: 10px;">Guardar Zapatilla</button>
+        </form>
+      </div>
+
+      <!-- Panel 2: Tabla de Inventario de Productos -->
+      <div class="panel-card">
+        <div class="panel-header">
+          <h3 class="panel-title">📦 Inventario Registrado</h3>
+          
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <span id="products-count" style="font-size: 0.85rem; color: var(--text-secondary); font-weight: 600;">0 productos</span>
+            <select id="filter-brand-admin" class="form-select" style="padding: 6px 12px; font-size: 0.85rem; width: auto;">
+              <option value="all">Todas las Marcas</option>
+              <option value="nike">Nike</option>
+              <option value="adidas">Adidas</option>
+              <option value="new-balance">New Balance</option>
+              <option value="asics">ASICS</option>
+              <option value="puma">Puma</option>
+              <option value="reebok">Reebok</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="overflow-x: auto;">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Foto</th>
+                <th>Zapatilla</th>
+                <th>Marca</th>
+                <th>Categoría</th>
+                <th>Precio</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="inventory-table-body">
+              <!-- RENDERIZADO POR JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Modal Editar Producto -->
+  <div id="edit-product-modal" class="admin-modal-backdrop">
+    <div class="admin-modal-box">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h3 class="admin-modal-title" style="margin: 0;">✏️ Editar Zapatilla</h3>
+        <button id="btn-close-edit-modal" style="background: none; border: none; color: var(--text-secondary); font-size: 1.5rem; cursor: pointer;">&times;</button>
+      </div>
+
+      <form id="edit-product-form">
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Marca:</label>
+            <select id="edit-prod-brand" class="form-select" required>
+              <option value="nike">Nike</option>
+              <option value="adidas">Adidas</option>
+              <option value="new-balance">New Balance</option>
+              <option value="asics">ASICS</option>
+              <option value="puma">Puma</option>
+              <option value="reebok">Reebok</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Nombre del Modelo:</label>
+            <input type="text" id="edit-prod-name" class="form-input" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Categoría:</label>
+            <select id="edit-prod-category" class="form-select">
+              <option value="Daily Trainer">Daily Trainer</option>
+              <option value="Máxima Amortiguación">Máxima Amortiguación</option>
+              <option value="Velocidad & Carbono">Velocidad & Carbono</option>
+              <option value="Estabilidad">Estabilidad</option>
+              <option value="Casual & Sport">Casual & Sport</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Precio en COP ($):</label>
+            <input type="number" id="edit-prod-price" class="form-input" required>
+          </div>
+
+          <div class="form-group full">
+            <label class="form-label">URL de Imagen:</label>
+            <input type="url" id="edit-prod-image" class="form-input" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Peso (g):</label>
+            <input type="text" id="edit-prod-weight" class="form-input">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Drop (mm):</label>
+            <input type="text" id="edit-prod-drop" class="form-input">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Amortiguación:</label>
+            <input type="text" id="edit-prod-cushioning" class="form-input">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Etiqueta Destacada (Badge):</label>
+            <input type="text" id="edit-prod-badge" class="form-input">
+          </div>
+
+          <div class="form-group full">
+            <label class="form-label">Descripción Detallada:</label>
+            <textarea id="edit-prod-desc" class="form-textarea" rows="3"></textarea>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 12px; justify-content: flex-end; margin-top: 20px;">
+          <button type="button" id="btn-cancel-edit" class="btn-secondary">Cancelar</button>
+          <button type="submit" class="btn-primary">Guardar Cambios</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/products.js"></script>
+  <script src="js/firebase-config.js"></script>
+  <script src="js/products-service.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>

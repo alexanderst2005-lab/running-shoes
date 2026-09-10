@@ -1,0 +1,159 @@
+/* ==========================================================================
+   RUNNING SHOES — RESPONSIVE MEDIA QUERIES
+   Column Rules: Desktop = 4 cols, Tablet = 2-3 cols, Mobile = 1-2 cols
+   ========================================================================== */
+
+/* Laptop & Small Desktop (1024px - 1279px) */
+@media (max-width: 1279px) {
+  .products-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+
+  .brands-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+}
+
+/* Tablet (768px - 1023px) */
+@media (max-width: 1023px) {
+  .hero-section {
+    min-height: 70vh;
+    padding: 40px 0;
+  }
+
+  .hero-title {
+    font-size: 3.2rem;
+  }
+
+  .brands-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+
+  .products-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+  }
+
+  .guarantees-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+
+  .modal-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .modal-media {
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    height: 280px;
+  }
+}
+
+/* Mobile (<768px) */
+@media (max-width: 767px) {
+  :root {
+    --header-height: 64px;
+  }
+
+  .nav-menu {
+    display: none; /* Mobile menu can be toggled */
+  }
+
+  .btn-whatsapp-header span {
+    display: none; /* Only icon on mobile top bar */
+  }
+
+  .btn-whatsapp-header {
+    padding: 10px;
+    border-radius: 50%;
+  }
+
+  .hero-section {
+    min-height: auto;
+    padding: 40px 0 60px 0;
+  }
+
+  .hero-bg-wrapper {
+    width: 100%;
+    opacity: 0.25;
+  }
+
+  .hero-overlay {
+    background: linear-gradient(180deg, #0b0f12 0%, rgba(11, 15, 18, 0.9) 100%);
+  }
+
+  .hero-title {
+    font-size: 2.5rem;
+  }
+
+  .brands-grid {
+    grid-template-columns: repeat(1, 1fr);
+    gap: 16px;
+  }
+
+  .brand-card {
+    height: 280px;
+  }
+
+  .products-grid {
+    grid-template-columns: repeat(2, 1fr); /* 2 columns on mobile for clean catalog display */
+    gap: 12px;
+  }
+
+  .product-card-header {
+    height: 170px;
+    padding: 10px;
+  }
+
+  .product-card-body {
+    padding: 14px;
+  }
+
+  .product-title {
+    font-size: 0.95rem;
+    height: 2.4em;
+  }
+
+  .product-price {
+    font-size: 1.15rem;
+  }
+
+  .btn-whatsapp-product {
+    padding: 10px 8px;
+    font-size: 0.8rem;
+  }
+
+  .guarantees-grid {
+    grid-template-columns: repeat(1, 1fr);
+    gap: 16px;
+  }
+
+  .catalog-toolbar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+/* Extra Small Mobile (<480px) */
+@media (max-width: 479px) {
+  .products-grid {
+    grid-template-columns: repeat(1, 1fr); /* 1 column on small phones */
+  }
+
+  .product-card-header {
+    height: 220px;
+  }
+
+  .hero-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .btn-hero-primary, .btn-hero-secondary {
+    width: 100%;
+    justify-content: center;
+  }
+}
