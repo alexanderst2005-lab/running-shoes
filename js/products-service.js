@@ -32,11 +32,24 @@ class ProductsService {
 
   clearCache() {
     if (!this._isCacheEnabled()) return;
-    Object.keys(localStorage).forEach(key => {
-      if (key.startsWith('rs_cache_')) {
-        localStorage.removeItem(key);
-      }
-    });
+    try {
+      Object.keys(localStorage).forEach(key => {
+        if (key.startsWith('rs_cache_')) {
+          localStorage.removeItem(key);
+        }
+      });
+    } catch(e) {}
+  }
+
+  _safeSetCache(key, data) {
+    if (!this._isCacheEnabled()) return;
+    try {
+      localStorage.setItem(key, JSON.stringify(data));
+    } catch(e) {
+      console.warn('Cache lleno. Vaciando...', e);
+      this.clearCache();
+      try { localStorage.setItem(key, JSON.stringify(data)); } catch(e2) {}
+    }
   }
 
   // ─── MARCAS ────────────────────────────────────────────────────────────────
@@ -46,12 +59,12 @@ class ProductsService {
     if (this._isCacheEnabled()) {
       const cached = localStorage.getItem(cacheKey);
       if (cached) {
-        this._fetchBrands().then(d => localStorage.setItem(cacheKey, JSON.stringify(d)));
+        this._fetchBrands().then(d => this._safeSetCache(cacheKey, d));
         return JSON.parse(cached);
       }
     }
     const data = await this._fetchBrands();
-    if (this._isCacheEnabled()) localStorage.setItem(cacheKey, JSON.stringify(data));
+    this._safeSetCache(cacheKey, data);
     return data;
   }
 
@@ -79,12 +92,12 @@ class ProductsService {
     if (this._isCacheEnabled()) {
       const cached = localStorage.getItem(cacheKey);
       if (cached) {
-        this._fetchAllProducts().then(d => localStorage.setItem(cacheKey, JSON.stringify(d)));
+        this._fetchAllProducts().then(d => this._safeSetCache(cacheKey, d));
         return JSON.parse(cached);
       }
     }
     const data = await this._fetchAllProducts();
-    if (this._isCacheEnabled()) localStorage.setItem(cacheKey, JSON.stringify(data));
+    this._safeSetCache(cacheKey, data);
     return data;
   }
 
@@ -103,12 +116,12 @@ class ProductsService {
     if (this._isCacheEnabled()) {
       const cached = localStorage.getItem(cacheKey);
       if (cached) {
-        this._fetchProductsByBrand(brandId).then(d => localStorage.setItem(cacheKey, JSON.stringify(d)));
+        this._fetchProductsByBrand(brandId).then(d => this._safeSetCache(cacheKey, d));
         return JSON.parse(cached);
       }
     }
     const data = await this._fetchProductsByBrand(brandId);
-    if (this._isCacheEnabled()) localStorage.setItem(cacheKey, JSON.stringify(data));
+    this._safeSetCache(cacheKey, data);
     return data;
   }
 
