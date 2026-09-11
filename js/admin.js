@@ -225,13 +225,41 @@ document.addEventListener('DOMContentLoaded', async () => {
   let currentEditProductImage = null;
 
   async function deleteImageFile(imageUrl) {
-    if (!imageUrl || !imageUrl.includes('firebasestorage')) return;
-    try {
-      const fileRef = firebase.storage().refFromURL(imageUrl);
-      await fileRef.delete();
-    } catch (e) {
-      console.warn('Ignorado: no se pudo borrar imagen antigua.', e);
-    }
+    // Ya no usamos Firebase Storage, así que no hay archivos huérfanos que borrar.
+    // La imagen base64 se elimina automáticamente al borrar el documento en Firestore.
+    return;
+  }
+
+  async function compressImage(file, maxWidth = 800, maxHeight = 800, quality = 0.7) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = event => {
+        const img = new Image();
+        img.src = event.target.result;
+        img.onload = () => {
+          let width = img.width;
+          let height = img.height;
+          if (width > maxWidth || height > maxHeight) {
+            if (width > height) {
+              height = Math.round((height * maxWidth) / width);
+              width = maxWidth;
+            } else {
+              width = Math.round((width * maxHeight) / height);
+              height = maxHeight;
+            }
+          }
+          const canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+          resolve(canvas.toDataURL('image/jpeg', quality));
+        };
+        img.onerror = () => reject(new Error('No se pudo procesar la imagen'));
+      };
+      reader.onerror = () => reject(new Error('No se pudo leer el archivo'));
+    });
   }
 
   async function uploadImageFile(fileInputId) {
@@ -239,15 +267,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     const file = fileInput.files[0];
     if (!file) return null;
     
-    const storageRef = firebase.storage().ref();
-    const fileRef = storageRef.child(`products/${Date.now()}_${file.name}`);
-    
-    // Timeout para evitar que se quede colgado si Firebase falla
-    const uploadTask = fileRef.put(file);
-    const timeout = new Promise((_, reject) => setTimeout(() => reject(new Error('Tiempo de espera agotado. Ve a Firebase -> Storage -> Rules y cambia "false" por "true".')), 12000));
-    
-    await Promise.race([uploadTask, timeout]);
-    return await fileRef.getDownloadURL();
+    // Convertir y comprimir la imagen a Base64
+    return await compressImage(file);
   }
 
   function openEditModal(product) {
