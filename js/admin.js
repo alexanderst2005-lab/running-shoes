@@ -191,12 +191,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 
       // Event listener para Eliminar
       tr.querySelector('.btn-delete-product').addEventListener('click', async () => {
-        if (confirm(`¿Estás seguro de eliminar "${p.name}"?`)) {
+        if (confirm(`¿Estás seguro de que deseas eliminar la zapatilla "${p.name}"?`)) {
           try {
+            await deleteImageFile(p.image);
             await window.productsService.deleteProduct(p.id);
-            alert(`✅ "${p.name}" ha sido eliminado.`);
-            await loadProductsTable(filterBrandEl ? filterBrandEl.value : 'all');
+            tr.remove();
             await loadDashboardStats();
+            document.getElementById('products-count').textContent = `${(await window.productsService.getAllProducts()).length} productos`;
           } catch (err) {
             alert('❌ Error al eliminar: ' + err.message);
           }
@@ -223,6 +224,16 @@ document.addEventListener('DOMContentLoaded', async () => {
   const btnCancelEdit = document.getElementById('btn-cancel-edit');
   let currentEditProductImage = null;
 
+  async function deleteImageFile(imageUrl) {
+    if (!imageUrl || !imageUrl.includes('firebasestorage')) return;
+    try {
+      const fileRef = firebase.storage().refFromURL(imageUrl);
+      await fileRef.delete();
+    } catch (e) {
+      console.warn('Ignorado: no se pudo borrar imagen antigua.', e);
+    }
+  }
+
   async function uploadImageFile(fileInputId) {
     const fileInput = document.getElementById(fileInputId);
     const file = fileInput.files[0];
@@ -230,7 +241,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     const storageRef = firebase.storage().ref();
     const fileRef = storageRef.child(`products/${Date.now()}_${file.name}`);
-    await fileRef.put(file);
+    
+    // Timeout para evitar que se quede colgado si Firebase falla
+    const uploadTask = fileRef.put(file);
+    const timeout = new Promise((_, reject) => setTimeout(() => reject(new Error('Tiempo de espera agotado. Ve a Firebase -> Storage -> Rules y cambia "false" por "true".')), 12000));
+    
+    await Promise.race([uploadTask, timeout]);
     return await fileRef.getDownloadURL();
   }
 
@@ -283,6 +299,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         submitBtn.disabled = false;
         submitBtn.textContent = originalBtnText;
         return;
+      }
+
+      // Eliminar imagen antigua si subió una nueva
+      if (imageUrl && currentEditProductImage && currentEditProductImage !== imageUrl) {
+        await deleteImageFile(currentEditProductImage);
       }
 
       const updatedData = {
