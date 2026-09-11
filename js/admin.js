@@ -283,8 +283,27 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('edit-prod-cushioning').value = product.cushioning || '';
     document.getElementById('edit-prod-badge').value      = product.badge || '';
     document.getElementById('edit-prod-desc').value       = product.description || '';
+    
+    const indicator = document.getElementById('current-photo-indicator');
+    if (indicator) {
+      indicator.textContent = currentEditProductImage ? '✓ Tiene foto asignada (se mantendrá si no subes otra)' : '⚠️ Sin foto asignada';
+      indicator.style.color = currentEditProductImage ? 'var(--accent-green)' : 'var(--accent-red)';
+    }
 
     editModal.classList.add('active');
+  }
+
+  const btnRemovePhoto = document.getElementById('btn-remove-photo');
+  if (btnRemovePhoto) {
+    btnRemovePhoto.addEventListener('click', () => {
+      currentEditProductImage = '';
+      document.getElementById('edit-prod-image').value = '';
+      const indicator = document.getElementById('current-photo-indicator');
+      if (indicator) {
+        indicator.textContent = '🗑️ Foto eliminada (guarda para aplicar cambios)';
+        indicator.style.color = 'var(--text-secondary)';
+      }
+    });
   }
 
   function closeEditModal() {

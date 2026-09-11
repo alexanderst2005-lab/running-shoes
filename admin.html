@@ -274,7 +274,11 @@
 
           <div class="form-group full">
             <label class="form-label">Foto del Producto (Opcional: Subir nueva foto para reemplazar la actual):</label>
-            <input type="file" id="edit-prod-image" class="form-input" accept="image/*">
+            <div style="display: flex; gap: 10px; align-items: center;">
+              <input type="file" id="edit-prod-image" class="form-input" accept="image/*" style="flex:1;">
+              <button type="button" id="btn-remove-photo" class="btn-danger" style="padding: 10px 15px; border-radius: 8px;" title="Eliminar foto actual">🗑️ Quitar Foto</button>
+            </div>
+            <div id="current-photo-indicator" style="font-size: 0.8rem; color: var(--accent-green); margin-top: 5px;"></div>
           </div>
 
 
